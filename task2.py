@@ -24,3 +24,14 @@ def clean_text(texto):
     return texto.lower()
 
 print(clean_text(contenido))
+
+text = clean_text(contenido)
+
+palabras = text.split()
+vocabulario = list()
+
+for i in palabras:
+    if i not in vocabulario:
+        vocabulario.append(i)
+
+print(vocabulario)
