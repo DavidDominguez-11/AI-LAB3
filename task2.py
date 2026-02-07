@@ -5,8 +5,8 @@ def data(path):
         print("\nArchivo cargado: ", path)
         return file.read()
 
-#contenido = data('testdata.txt')
-contenido = data('entrenamiento.txt')
+contenido = data('testdata.txt')
+#contenido = data('entrenamiento.txt')
 
 def get_symbols(texto):
     symbols = []
@@ -89,3 +89,43 @@ p_ham = num_ham / total_mensajes
 print("\nProbabilidades a Priori:")
 print("P(Spam) =", num_spam, "/", total_mensajes, "=", p_spam)
 print("P(Ham) =", num_ham, "/", total_mensajes, "=", p_ham)
+
+# b. Calcular Likelihoods con Laplace Smoothing (k=1)
+
+# Calcular totales de palabras en cada categoria
+total_palabras_spam = sum(bag_spam.values())
+total_palabras_ham = sum(bag_ham.values())
+tamaño_vocabulario = len(vocabulario)
+
+print("\nTotal palabras en SPAM:", total_palabras_spam)
+print("Total palabras en HAM:", total_palabras_ham)
+print("Tamaño del vocabulario |V|:", tamaño_vocabulario)
+
+# Diccionarios para guardar las probabilidades
+likelihoods_spam = {}
+likelihoods_ham = {}
+
+k = 1  # Constante de Laplace Smoothing
+
+# Calcular P(palabra | Spam) para cada palabra en el vocabulario
+for palabra in vocabulario:
+    # Si la palabra está en bag_spam, usamos su frecuencia, sino es 0
+    count_spam = bag_spam.get(palabra, 0)
+    p_palabra_spam = (count_spam + k) / (total_palabras_spam + k * tamaño_vocabulario)
+    likelihoods_spam[palabra] = p_palabra_spam
+
+# Calcular P(palabra | Ham) para cada palabra en el vocabulario
+for palabra in vocabulario:
+    # Si la palabra esta en bag_ham, usamos su frecuencia, sino es 0
+    count_ham = bag_ham.get(palabra, 0)
+    p_palabra_ham = (count_ham + k) / (total_palabras_ham + k * tamaño_vocabulario)
+    likelihoods_ham[palabra] = p_palabra_ham
+
+print("\nLikelihoods P(palabra | Spam):")
+for clave, valor in likelihoods_spam.items():
+    print(f"\n{clave} | {valor}")
+
+print("\nLikelihoods P(palabra | Ham):")
+for clave, valor in likelihoods_ham.items():
+    print(f"\n{clave} | {valor}")
+
