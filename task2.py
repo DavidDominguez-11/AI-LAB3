@@ -44,7 +44,7 @@ for linea in lineas:
 
 print("\nDiccionario:", dic)
 
-# Separar 80/20 para cada categoría
+# Separar 80/20 para cada categoria
 print("\nTotal mensajes SPAM:", len(dic['spam']))
 print("Total mensajes HAM:", len(dic['ham']))
 
@@ -204,3 +204,52 @@ def predict(mensaje):
 mensaje_prueba = "Fair enough, anything going on?"
 resultado = predict(mensaje_prueba)
 
+# 4 evaluacion b matriz de confusión y el Accuracy sobre el set de prueba
+
+# Evaluar sobre el conjunto de prueba
+print("EVALUACION SOBRE CONJUNTO DE PRUEBA")
+
+TP = 0  # True Positives: predijo spam y era spam
+TN = 0  # True Negatives: predijo ham y era ham
+FP = 0  # False Positives: predijo spam pero era ham
+FN = 0  # False Negatives: predijo ham pero era spam
+
+# Evaluar mensajes SPAM del test
+print("\nEvaluando mensajes SPAM del test")
+for mensaje in test_spam:
+    prediccion = predict(mensaje)
+    if prediccion == "spam":
+        TP += 1
+    else:
+        FN += 1
+
+# Evaluar mensajes HAM del test
+print("\nEvaluando mensajes HAM del test")
+for mensaje in test_ham:
+    prediccion = predict(mensaje)
+    if prediccion == "ham":
+        TN += 1
+    else:
+        FP += 1
+
+# Matriz de Confusion
+print("\nMATRIZ DE CONFUSION")
+print("Predicho: SPAM | HAM")
+print("Real SPAM:", TP, "|", FN)
+print("Real HAM:", FP, "|", TN)
+
+# Calcular Accuracy
+total_predicciones = TP + TN + FP + FN
+accuracy = (TP + TN) / total_predicciones
+
+print("\n" + "="*60)
+print("RESULTADOS FINALES")
+print("="*60)
+print("True Positives (TP):", TP)
+print("True Negatives (TN):", TN)
+print("False Positives (FP):", FP)
+print("False Negatives (FN):", FN)
+print("\nAccuracy = (TP + TN) / Total")
+print("Accuracy =", TP, "+", TN, "/", total_predicciones)
+print("Accuracy =", accuracy)
+print("\n" + "="*60)
