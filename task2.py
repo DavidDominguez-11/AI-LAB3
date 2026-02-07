@@ -253,3 +253,31 @@ print("\nAccuracy = (TP + TN) / Total")
 print("Accuracy =", TP, "+", TN, "/", total_predicciones)
 print("Accuracy =", accuracy)
 print("\n" + "="*60)
+
+# solo para presentar bonito
+import matplotlib.pyplot as plt
+
+# Datos de la matriz de confusión
+matriz = [[TP, FN],
+          [FP, TN]]
+
+etiquetas = ['SPAM', 'HAM']
+
+# Crear la figura
+plt.figure(figsize=(6, 5))
+plt.imshow(matriz, cmap='Blues', alpha=0.7)
+
+# Añadir los números en cada celda
+for i in range(2):
+    for j in range(2):
+        plt.text(j, i, str(matriz[i][j]), ha='center', va='center', fontsize=20)
+
+# Configurar etiquetas
+plt.xticks([0, 1], etiquetas)
+plt.yticks([0, 1], etiquetas)
+plt.xlabel('Predicho')
+plt.ylabel('Real')
+plt.title('Matriz de Confusion')
+
+plt.colorbar()
+plt.show()
