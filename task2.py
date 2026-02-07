@@ -7,7 +7,6 @@ def data(path):
         print("\nArchivo cargado: ", path)
         return file.read()
 
-#contenido = data('testdata.txt')
 contenido = data('entrenamiento.txt')
 
 def get_symbols(texto):
@@ -45,23 +44,47 @@ for linea in lineas:
 
 print("\nDiccionario:", dic)
 
-# Crear vocabulario SOLO de las palabras de los mensajes
+# Separar 80/20 para cada categoría
+print("\nTotal mensajes SPAM:", len(dic['spam']))
+print("Total mensajes HAM:", len(dic['ham']))
+
+split_ratio = 0.8
+
+# Calcular índices de corte
+spam_split = int(len(dic['spam']) * split_ratio)
+ham_split = int(len(dic['ham']) * split_ratio)
+
+# Train set (80%)
+train_spam = dic['spam'][:spam_split]
+train_ham = dic['ham'][:ham_split]
+
+# Test set (20%)
+test_spam = dic['spam'][spam_split:]
+test_ham = dic['ham'][ham_split:]
+
+print("\nTrain - SPAM:", len(train_spam), "mensajes")
+print("Train - HAM:", len(train_ham), "mensajes")
+print("Test - SPAM:", len(test_spam), "mensajes")
+print("Test - HAM:", len(test_ham), "mensajes")
+
+# Crear vocabulario SOLO del conjunto de entrenamiento
 todas_las_palabras = []
-for mensajes in dic.values():
-    for mensaje in mensajes:
-        todas_las_palabras.extend(mensaje.split())
+for mensaje in train_spam:
+    todas_las_palabras.extend(mensaje.split())
+for mensaje in train_ham:
+    todas_las_palabras.extend(mensaje.split())
 
 # Vocabulario sin duplicados
 vocabulario = sorted(list(set(todas_las_palabras)))
 
 print("\nVocabulario:", vocabulario)
 
-# Bag of Words: Diccionarios con palabra:frecuencia
+# Bag of Words: Diccionarios con palabra:frecuencia SOLO del conjunto de entrenamiento
 bag_spam = {}
 bag_ham = {}
 
 # Contar palabras en SPAM
-for mensaje in dic['spam']:
+for mensaje in train_spam:
     for palabra in mensaje.split():
         if palabra in bag_spam:
             bag_spam[palabra] += 1
@@ -69,7 +92,7 @@ for mensaje in dic['spam']:
             bag_spam[palabra] = 1
 
 # Contar palabras en HAM
-for mensaje in dic['ham']:
+for mensaje in train_ham:
     for palabra in mensaje.split():
         if palabra in bag_ham:
             bag_ham[palabra] += 1
@@ -81,9 +104,9 @@ print("\nBag of Words HAM:", bag_ham)
 
 # a. Calcule las probabilidades a priori (Priors): P(Spam) y P(Ham)
 
-total_mensajes = len(dic['spam']) + len(dic['ham'])
-num_spam = len(dic['spam'])
-num_ham = len(dic['ham'])
+total_mensajes = len(train_spam) + len(train_ham)
+num_spam = len(train_spam)
+num_ham = len(train_ham)
 
 p_spam = num_spam / total_mensajes
 p_ham = num_ham / total_mensajes
@@ -180,3 +203,4 @@ def predict(mensaje):
 # Ejemplo de uso:
 mensaje_prueba = "Fair enough, anything going on?"
 resultado = predict(mensaje_prueba)
+
