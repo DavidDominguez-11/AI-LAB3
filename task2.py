@@ -6,68 +6,72 @@ def data(path):
         return file.read()
 
 contenido = data('testdata.txt')
-#print(contenido.lower())
 
 def get_symbols(texto):
     symbols = []
     for char in texto:
-        # Si NO es letra y NO es espacio (y no lo hemos guardado ya)
         if not char.isalpha() and not char.isspace() and char not in symbols:
             symbols.append(char)
-    print("\nSimbolos extraidos: ", symbols)
     return symbols
 
-#simbolos = get_symbols(contenido)
-#print(simbolos)
-
 def clean_text(texto):
-    for simbolo in get_symbols(texto):
+    symbols = get_symbols(texto)
+    for simbolo in symbols:
         texto = texto.replace(simbolo, "")
-    print("\nTexto limpio: ", texto)
     return texto.lower()
 
-#print(clean_text(contenido))
+lineas = contenido.strip().split('\n')
 
-text = clean_text(contenido)
-
-palabras = text.split()
-vocabulario = list()
-
-for i in palabras:
-    if i not in vocabulario or i == 'spam' or i == 'ham':
-        vocabulario.append(i)
-
-print("\nVocabulario: ", vocabulario)
-
-
-# dic de ham y spam
 dic = {
     "ham": [],
     "spam": []
 }
 
-
-categoria_actual = None
-frase_temporal = []
-
-for palabra in vocabulario:
-    if palabra == "ham" or palabra == "spam":
-        # Si ya teníamos una categoría y palabras guardadas, las unimos y guardamos
-        if categoria_actual and frase_temporal:
-            dic[categoria_actual].append(" ".join(frase_temporal))
+for linea in lineas:
+    partes = linea.split('\t')
+    if len(partes) == 2:
+        etiqueta = partes[0].strip().lower()
+        mensaje_original = partes[1].strip()
         
-        # Actualizamos a la nueva categoría y reseteamos la frase temporal
-        categoria_actual = palabra
-        frase_temporal = []
-    else:
-        # Si no es etiqueta, es parte del mensaje
-        frase_temporal.append(palabra)
+        # Limpiar el mensaje
+        mensaje_limpio = clean_text(mensaje_original)
+        
+        # Agregar a la categoría correspondiente
+        if etiqueta in dic:
+            dic[etiqueta].append(mensaje_limpio)
 
-# Al terminar el bucle, guardamos la última frase pendiente
-if categoria_actual and frase_temporal:
-    dic[categoria_actual].append(" ".join(frase_temporal))
+print("\nDiccionario:", dic)
 
-print("\nDiccionario: ", dic)
+# Crear vocabulario SOLO de las palabras de los mensajes
+todas_las_palabras = []
+for mensajes in dic.values():
+    for mensaje in mensajes:
+        todas_las_palabras.extend(mensaje.split())
 
+# Vocabulario sin duplicados
+vocabulario = sorted(list(set(todas_las_palabras)))
 
+print("\nVocabulario:", vocabulario)
 
+# Bag of Words: Diccionarios con palabra:frecuencia
+bag_spam = {}
+bag_ham = {}
+
+# Contar palabras en SPAM
+for mensaje in dic['spam']:
+    for palabra in mensaje.split():
+        if palabra in bag_spam:
+            bag_spam[palabra] += 1
+        else:
+            bag_spam[palabra] = 1
+
+# Contar palabras en HAM
+for mensaje in dic['ham']:
+    for palabra in mensaje.split():
+        if palabra in bag_ham:
+            bag_ham[palabra] += 1
+        else:
+            bag_ham[palabra] = 1
+
+print("\nBag of Words SPAM:", bag_spam)
+print("\nBag of Words HAM:", bag_ham)
