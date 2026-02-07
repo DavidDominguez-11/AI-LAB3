@@ -5,7 +5,8 @@ def data(path):
         print("\nArchivo cargado: ", path)
         return file.read()
 
-contenido = data('testdata.txt')
+#contenido = data('testdata.txt')
+contenido = data('entrenamiento.txt')
 
 def get_symbols(texto):
     symbols = []
@@ -75,3 +76,16 @@ for mensaje in dic['ham']:
 
 print("\nBag of Words SPAM:", bag_spam)
 print("\nBag of Words HAM:", bag_ham)
+
+# a. Calcule las probabilidades a priori (Priors): P(Spam) y P(Ham)
+
+total_mensajes = len(dic['spam']) + len(dic['ham'])
+num_spam = len(dic['spam'])
+num_ham = len(dic['ham'])
+
+p_spam = num_spam / total_mensajes
+p_ham = num_ham / total_mensajes
+
+print("\nProbabilidades a Priori:")
+print("P(Spam) =", num_spam, "/", total_mensajes, "=", p_spam)
+print("P(Ham) =", num_ham, "/", total_mensajes, "=", p_ham)
