@@ -1,3 +1,5 @@
+import math
+
 print("Task 2: Filtro de Spam Bayesiano")
 
 def data(path):
@@ -5,8 +7,8 @@ def data(path):
         print("\nArchivo cargado: ", path)
         return file.read()
 
-contenido = data('testdata.txt')
-#contenido = data('entrenamiento.txt')
+#contenido = data('testdata.txt')
+contenido = data('entrenamiento.txt')
 
 def get_symbols(texto):
     symbols = []
@@ -129,3 +131,52 @@ print("\nLikelihoods P(palabra | Ham):")
 for clave, valor in likelihoods_ham.items():
     print(f"\n{clave} | {valor}")
 
+# Inferencia (Predicción) a. Cree una función predict(mensaje)
+
+def predict(mensaje):
+    # i. Tokenizar el mensaje nuevo (limpiar igual que en entrenamiento)
+    mensaje_limpio = clean_text(mensaje)
+    palabras = mensaje_limpio.split()
+    
+    print("\nMensaje a predecir:", mensaje)
+    print("Mensaje limpio:", mensaje_limpio)
+    print("Palabras:", palabras)
+    
+    # ii. Calcular log-probabilidades para evitar underflow
+    # Inicializar con los priors (en logaritmo)
+    log_prob_spam = math.log(p_spam)
+    log_prob_ham = math.log(p_ham)
+    
+    print("\nLog P(Spam) inicial:", log_prob_spam)
+    print("Log P(Ham) inicial:", log_prob_ham)
+    
+    # Para cada palabra del mensaje
+    for palabra in palabras:
+        # Solo considerar palabras que existen en el vocabulario
+        if palabra in vocabulario:
+            # Sumar log-probabilidades (equivalente a multiplicar probabilidades)
+            log_prob_spam += math.log(likelihoods_spam[palabra])
+            log_prob_ham += math.log(likelihoods_ham[palabra])
+            
+            print(f"\nPalabra '{palabra}' encontrada en vocabulario:")
+            print(f"  P({palabra} | Spam) = {likelihoods_spam[palabra]}")
+            print(f"  P({palabra} | Ham) = {likelihoods_ham[palabra]}")
+        else:
+            print(f"\nPalabra '{palabra}' NO está en vocabulario (ignorada)")
+    
+    # iii. Aplicar regla de Bayes (ya aplicada con logaritmos)
+    print("\nLog P(Spam | Mensaje) =", log_prob_spam)
+    print("Log P(Ham | Mensaje) =", log_prob_ham)
+    
+    # iv. Retornar la clase con mayor probabilidad
+    if log_prob_spam > log_prob_ham:
+        prediccion = "spam"
+    else:
+        prediccion = "ham"
+    
+    print("\nPrediccion:", prediccion.upper())
+    return prediccion
+
+# Ejemplo de uso:
+mensaje_prueba = "Fair enough, anything going on?"
+resultado = predict(mensaje_prueba)
