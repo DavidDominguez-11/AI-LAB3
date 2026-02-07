@@ -2,6 +2,7 @@ print("Task 2: Filtro de Spam Bayesiano")
 
 def data(path):
     with open(path, 'r', encoding='utf-8') as file:
+        print("\nArchivo cargado: ", path)
         return file.read()
 
 contenido = data('testdata.txt')
@@ -13,6 +14,7 @@ def get_symbols(texto):
         # Si NO es letra y NO es espacio (y no lo hemos guardado ya)
         if not char.isalpha() and not char.isspace() and char not in symbols:
             symbols.append(char)
+    print("\nSimbolos extraidos: ", symbols)
     return symbols
 
 #simbolos = get_symbols(contenido)
@@ -21,6 +23,7 @@ def get_symbols(texto):
 def clean_text(texto):
     for simbolo in get_symbols(texto):
         texto = texto.replace(simbolo, "")
+    print("\nTexto limpio: ", texto)
     return texto.lower()
 
 #print(clean_text(contenido))
@@ -34,7 +37,8 @@ for i in palabras:
     if i not in vocabulario or i == 'spam' or i == 'ham':
         vocabulario.append(i)
 
-#print(vocabulario)
+print("\nVocabulario: ", vocabulario)
+
 
 # dic de ham y spam
 dic = {
@@ -63,5 +67,7 @@ for palabra in vocabulario:
 if categoria_actual and frase_temporal:
     dic[categoria_actual].append(" ".join(frase_temporal))
 
-print(dic)
+print("\nDiccionario: ", dic)
+
+
 
